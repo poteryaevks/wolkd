@@ -1,0 +1,45 @@
+{
+    "zgame": {
+        "zombies": [{
+
+				"id": 13,
+                "path": "assets/zombies.png",
+                "speed": 35,
+                "type": 3,
+				"anger": 0,
+                "position": [600, 750],
+				"hp": 20,
+				"damage": 13,
+				"rgb": [1, 0, 0]
+            },
+			{
+
+				"id": 12,
+                "path": "assets/zombies.png",
+                "speed": 20,
+				"anger": 0,
+                "type": 5,
+                "position": [900, 650],
+				"damage": 13,
+				"hp": 20, 
+				"rgb": [1, 0, 0]
+            }
+			],
+			"player": {
+
+				"id": 11,
+                "path": "assets/zombies.png",
+                "speed": 80,
+                "position": [600, 500],
+				"hp": 100,
+				"rgb": [1, 0, 0]
+            },
+			"world": {
+
+				"id": 1,
+                "tiles": "assets/tiles.png",
+				"map": "assets/forest.map",
+				"rgb": [1, 0, 0]
+            }
+ }
+}
