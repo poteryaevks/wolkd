@@ -9,7 +9,7 @@
 #include <sgraphics/engine/polygon_funcs.h>
 #include <sgraphics/geometry/olc.h>
 
-#include <almaz/misc/factory.h>
+#include <alm/misc/factory.h>
 
 
 //!
@@ -85,7 +85,7 @@ std::shared_ptr<zgame::rect>, const std::string&, const std::array<uint8_t, 3>&
 )>;
 
 
-static almaz::misc::IFactory<ZTile, char, TileConstuctor, std::shared_ptr<zgame::rect>, const std::string&, const std::array<uint8_t, 3>&> TILE_FACTORY;
+static alm::misc::IFactory<ZTile, char, TileConstuctor, std::shared_ptr<zgame::rect>, const std::string&, const std::array<uint8_t, 3>&> TILE_FACTORY;
 
 //!
 //! \brief The CarTile class

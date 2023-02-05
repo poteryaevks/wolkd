@@ -1,9 +1,9 @@
 #pragma once
 
-#include <almaz/common/event.h>
+#include <alm/common/event.h>
 #include <boost/noncopyable.hpp>
 
-#include <almaz/common/event.h>
+#include <alm/common/event.h>
 
 //!
 //! \brief The IEventer class интерфейс, предоставляющий функционал для генерации событий
@@ -12,7 +12,7 @@
 template <class EventType>
 class IEventer : private boost::noncopyable
 {
-    using eventer_type = almaz::common::TEvent<EventType>;
+    using eventer_type = alm::common::TEvent<EventType>;
 
 public:
 

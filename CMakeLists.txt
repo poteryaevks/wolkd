@@ -22,15 +22,13 @@ message("RapidJSON_INCLUDE_DIR: ${RapidJSON_INCLUDE_DIR}")
 
 find_package(GLEW REQUIRED)
 
-# Seek Almaz
+if(NOT Alm_FOUND)
 
-if(NOT Almaz_FOUND)
-
-    if(EXISTS ${ALMAZ_ROOT})
-        list(APPEND CMAKE_PREFIX_PATH "${ALMAZ_ROOT}/lib/cmake/almaz")
+    if(EXISTS ${ALM_ROOT})
+        list(APPEND CMAKE_PREFIX_PATH "${ALM_ROOT}/lib/cmake/alm")
     endif()
 
-    find_package(Almaz CONFIG
+    find_package(alm CONFIG
         COMPONENTS
         vimpel
         misc
@@ -46,12 +44,9 @@ endif()
 
 # Seek Qt
 
-find_package(Qt5 COMPONENTS Core REQUIRED)
-
-# message("Qt5Core_INCLUDE_DIRS: ${Qt5Core_INCLUDE_DIRS}")
-# message("Qt5Core_LIBRARIES: ${Qt5Core_LIBRARIES}")
-
-# Seek BOOST
+find_package(Qt5Core REQUIRED)
+include_directories(${Qt5Core_INCLUDE_DIRS})
+add_compile_options(-fPIC)
 
 find_package(Boost 1.62
    COMPONENTS
@@ -60,13 +55,6 @@ find_package(Boost 1.62
    filesystem
    REQUIRED
    )
-
-#if(Boost_FOUND)
-#    message(STATUS "Boost_LIBRARIES: " "${Boost_LIBRARIES}")
-#else()
-#    message(FATAL_ERROR " Boost has not been found")
-#endif()
-
 
 find_package(SG
     COMPONENTS

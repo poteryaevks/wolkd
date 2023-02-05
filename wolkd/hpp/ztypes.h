@@ -9,7 +9,7 @@
 #include <sgraphics/geometry/olc.h>
 #include <sgraphics/convertion/convertion.h>
 
-#include <QFlags>
+#include <QtCore/QFlags>
 
 
 //!

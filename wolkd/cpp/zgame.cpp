@@ -19,7 +19,7 @@ int FULL_HP;
 
 void WolkingZombies::initImpl()
 {
-    using namespace almaz;
+    using namespace alm;
 
     static zgame::id_type currentId{1};
 

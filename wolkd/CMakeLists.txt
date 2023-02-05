@@ -21,7 +21,7 @@ add_executable(${TARGET_NAME}
 target_include_directories(${TARGET_NAME} PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}/hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}"
-    ${Almaz_INCLUDE_DIRS}
+    ${Alm_INCLUDE_DIRS}
     ${SG_INCLUDE_DIRS}
     ${Qt5Core_INCLUDE_DIR}
     "${CMAKE_SOURCE_DIR}/libs"
@@ -35,7 +35,6 @@ target_link_libraries(${PROJECT_NAME} PUBLIC
     SG::convertion
     SG::geometry
     SG::engine
-    Almaz::misc
     Qt5::Core
     bfs
     )

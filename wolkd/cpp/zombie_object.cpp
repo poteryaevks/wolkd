@@ -5,7 +5,7 @@
 
 #include <bfs/pathfinder.h>
 
-#include <almaz/misc/random.h>
+#include <alm/misc/random.h>
 
 #include <sgraphics/geometry/olc.h>
 #include <sgraphics/engine/polygon_funcs.h>
@@ -70,7 +70,7 @@ ZZombie::ZZombie(game_ptr_type game, stats_ptr_type initData)
       updateSprite_(0),
       orientation_(zgame::RIGHT),
       state_(SHAFFLE),
-      SHUFFLE_DIST_(almaz::random::getReal(70, 150)),
+      SHUFFLE_DIST_(alm::random::getReal(70, 150)),
       lastAttackTime_(std::numeric_limits<float>::max()),
       stats_(initData)
 {
