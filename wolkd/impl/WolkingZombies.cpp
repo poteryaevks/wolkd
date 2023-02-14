@@ -14,7 +14,7 @@
 
 namespace
 {
-    int FULL_HP;
+    int FULL_HP{};
 }
 
 namespace game
@@ -22,8 +22,6 @@ namespace game
     WolkingZombies::WolkingZombies(const std::string &title)
         : sg::BaseGame(title)
     {
-        using namespace alm;
-
         // static IdType CurrentId{};
         auto eventer = sg::GetEngine().GetEventer();
         if (eventer)
@@ -39,19 +37,16 @@ namespace game
         auto zombiesInitData = initializer->ExtractZombiesData();
         auto worldInitData = initializer->ExtractWorldData();
 
-        /////////////////////////////map/////////////////////////////
-        world_ = std::make_unique<WorldImpl>(this, std::make_shared<game::WorldStats>(std::move(worldInitData)));
-        world_->addEventHandler(*this, &WolkingZombies::addEvent);
+        world_ = std::make_unique<WorldImpl>(this, std::move(worldInitData));
+        world_->addEventHandler(*this, &WolkingZombies::OnEvent);
 
-        /////////////////////////////player/////////////////////////////
-        player_ = std::make_unique<Player>(this, std::make_shared<game::PlayerStats>(std::move(playerInitData)));
-        player_->addEventHandler(*this, &WolkingZombies::addEvent);
+        player_ = std::make_unique<Player>(this, std::move(playerInitData));
+        player_->addEventHandler(*this, &WolkingZombies::OnEvent);
 
-        /////////////////////////////zombies/////////////////////////////
         for (auto &&zombieInitData : zombiesInitData)
         {
-            auto zombie = std::make_unique<Zombie>(this, std::make_shared<ZombieStats>(std::move(zombieInitData)));
-            zombie->addEventHandler(*this, &WolkingZombies::addEvent);
+            auto zombie = std::make_unique<Zombie>(this, std::move(zombieInitData));
+            zombie->addEventHandler(*this, &WolkingZombies::OnEvent);
             m_zombies.push_back(std::move(zombie));
         }
 
@@ -75,7 +70,7 @@ namespace game
 
         player_->Show(duration);
 
-        printStats();
+        DrawPlayerStats();
     }
 
     void WolkingZombies::OnQuit()
@@ -84,76 +79,40 @@ namespace game
 
     PointType WolkingZombies::GetPlayerPos() const noexcept
     {
-        return player_->GetRect()->pos;
+        return player_->GetRect().pos;
     }
 
     FVectType WolkingZombies::GetOffset() const noexcept
     {
-        return (defPosition_ - player_->GetRect()->pos);
+        return (defPosition_ - player_->GetRect().pos);
     }
 
-    std::vector<FRectPtr> WolkingZombies::GetRects(ObjectsCategory category) const noexcept
+    FRectRefs WolkingZombies::GetRects(ObjectsCategory category) const noexcept
     {
-        std::vector<FRectPtr> rects;
+        FRectRefs result;
 
-        switch (category)
+        if (category & eObjectCategory::MAP)
         {
-        case eObjectCategory::MAP:
-        {
-            auto worldRects = world_->GetRects();
-            std::move(std::begin(worldRects), std::end(worldRects), std::back_inserter(rects));
-            break;
+            const auto &rects = world_->GetRects();
+
+            for (const auto &rect : rects)
+            {
+                result.push_back(rect);
+            }
         }
-        case eObjectCategory::PLAYER:
-        {
-            rects.emplace_back(player_->GetRect());
-            break;
-        }
-        case eObjectCategory::ENEMY:
+        if (category & eObjectCategory::ENEMY)
         {
             for (const auto &object : m_zombies)
             {
-                rects.push_back(object->GetRect());
+                result.push_back(object->GetRect());
             }
-            break;
         }
-        case eObjectCategory::MAP | eObjectCategory::PLAYER:
+        if (category & eObjectCategory::PLAYER)
         {
-            rects.emplace_back(player_->GetRect());
-            auto worldRects = world_->GetRects();
-
-            std::move(std::begin(worldRects), std::end(worldRects), std::back_inserter(rects));
-            break;
-        }
-        case eObjectCategory::MAP | eObjectCategory::ENEMY:
-        {
-            for (const auto &object : m_zombies)
-            {
-                rects.push_back(object->GetRect());
-            }
-
-            auto worldRects = world_->GetRects();
-            std::move(std::begin(worldRects), std::end(worldRects), std::back_inserter(rects));
-            break;
-        }
-        case eObjectCategory::MAP | eObjectCategory::ENEMY | eObjectCategory::PLAYER:
-        {
-            for (const auto &object : m_zombies)
-            {
-                rects.push_back(object->GetRect());
-            }
-
-            rects.emplace_back(player_->GetRect());
-            auto worldRects = world_->GetRects();
-
-            std::move(std::begin(worldRects), std::end(worldRects), std::back_inserter(rects));
-            break;
-        }
-        default:
-            break;
+            result.push_back(player_->GetRect());
         }
 
-        return std::move(rects);
+        return result;
     }
 
     IdType WolkingZombies::GetPlayerId() const noexcept
@@ -161,7 +120,7 @@ namespace game
         return player_->GetId();
     }
 
-    void WolkingZombies::addEvent(Event::Ptr event) noexcept
+    void WolkingZombies::OnEvent(Event::Ptr event) noexcept
     {
         if (!event)
             return;
@@ -170,11 +129,11 @@ namespace game
         {
         case ATTACK:
         {
-            auto id = event->getId();
+            auto id = event->GetId();
 
             if (player_->GetId() == id)
             {
-                player_->OnAttack(event);
+                player_->OnEvent(event);
                 return;
             }
 
@@ -182,7 +141,7 @@ namespace game
             {
                 if (zombie->GetId() == id)
                 {
-                    zombie->OnAttack(event);
+                    zombie->OnEvent(event);
                     return;
                 }
             }
@@ -194,10 +153,10 @@ namespace game
         }
     }
 
-    void WolkingZombies::printStats()
+    void WolkingZombies::DrawPlayerStats()
     {
         auto renderer = sg::GetEngine().GetRenderer();
-        const auto &hp = player_->GetStats()->hp;
+        const auto &hp = player_->GetStats().hp;
 
         renderer->DrawRect(FRectType({{20, 20}, {FULL_HP * 2, 20}}), {160, 150, 150, 150}, true);
         renderer->DrawRect(FRectType({{20, 20}, {hp * 2, 20}}), {190, 37, 37, 255}, true);

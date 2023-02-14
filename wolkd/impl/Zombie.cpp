@@ -1,6 +1,6 @@
 #include "Zombie.h"
-#include "impl/CollisionImpl.h"
 #include "../Types.h"
+#include "../helpers.hpp"
 
 #include <iostream>
 #include <math.h>
@@ -45,23 +45,21 @@ namespace
         offseted.pos += offset;
         return offseted;
     }
-
 }
 
 namespace game
 {
-    Zombie::Zombie(IGame::Ptr game, Stats::Ptr stats)
+    Zombie::Zombie(IGame::Ptr game, ZombieStats &&stats)
         : IObject(),
           game_(game),
-          stats_(stats),
-          zombieStats_(dynamic_cast<ZombieStats &>(*stats.get())),
-          checkCollision_(ICollision::Ptr(new DynamicCollision))
+          stats_(std::move(stats)),
+          checkCollision_(sg::ICollision::Create(sg::CollisionType::Dynamic2))
     {
-        rect_.pos = zombieStats_.position;
+        rect_.pos = stats_.position;
         rect_.size = SPRITE_SIZE;
-        rect_.vel = {zombieStats_.speed / 2, 0};
+        rect_.vel = {stats_.speed / 2, 0};
 
-        sprite_ = sg::GetEngine().CreateSprite(zombieStats_.path, zombieStats_.rgb);
+        sprite_ = sg::GetEngine().CreateSprite(stats_.path, stats_.rgb);
     }
 
     Zombie::~Zombie() = default;
@@ -84,15 +82,15 @@ namespace game
             orientation_ = toOrientation(rect_.vel);
             if (targetPoint == NO_TARGET)
             {
-                ::speedDown(rect_.vel, zombieStats_);
-                zombieStats_.position = rect_.pos; // сохранить позицию
+                ::speedDown(rect_.vel, stats_);
+                stats_.position = rect_.pos; // сохранить позицию
                 state_ = SHAFFLE;
                 rect_.vel /= 2;
             }
             else
             {
                 rect_.vel = targetPoint - rect_.pos;
-                ::speedUp(rect_.vel, zombieStats_);
+                ::speedUp(rect_.vel, stats_);
 
                 if ((targetPoint - rect_.pos).mag() < 50)
                 {
@@ -114,12 +112,12 @@ namespace game
             else
             {
                 static const float SHUFFLE_DIST_ = alm::random::getReal(70, 150);
-                if (rect_.pos.x > zombieStats_.position.x + SHUFFLE_DIST_)
+                if (rect_.pos.x > stats_.position.x + SHUFFLE_DIST_)
                 {
                     rect_.vel.x *= -1;
                 }
 
-                else if (rect_.pos.x < zombieStats_.position.x - SHUFFLE_DIST_)
+                else if (rect_.pos.x < stats_.position.x - SHUFFLE_DIST_)
                 {
                     rect_.vel.x *= -1;
                 }
@@ -148,18 +146,17 @@ namespace game
             break;
         }
 
-        // collisions
         CollisionsExec(duration);
         rect_.pos += rect_.vel * seconds;
         DrawMe();
     }
 
-    std::size_t Zombie::GetWidth() const noexcept
+    const std::size_t &Zombie::GetWidth() const noexcept
     {
         return SPRITE_SIZE.x;
     }
 
-    std::size_t Zombie::GetHight() const noexcept
+    const std::size_t &Zombie::GetHight() const noexcept
     {
         return SPRITE_SIZE.y;
     }
@@ -174,21 +171,21 @@ namespace game
         return ENEMY;
     }
 
-    FRectPtr Zombie::GetRect() const noexcept
+    const FRectType &Zombie::GetRect() noexcept
     {
-        return &rect_;
+        return rect_;
     }
 
-    void Zombie::OnAttack(Event::Ptr msg) noexcept
+    void Zombie::OnEvent(Event::Ptr msg) noexcept
     {
     }
 
     IdType Zombie::GetId() const noexcept
     {
-        return zombieStats_.id;
+        return stats_.id;
     }
 
-    Stats::Ptr Zombie::GetStats() const noexcept
+    const Stats &Zombie::GetStats() const noexcept
     {
         return stats_;
     }
@@ -196,12 +193,12 @@ namespace game
     PointType Zombie::GetTarget()
     {
         auto playerPos = game_->GetPlayerPos();
-        return (playerPos - rect_.pos).mag() < zombieStats_.dist ? playerPos : NO_TARGET;
+        return (playerPos - rect_.pos).mag() < stats_.dist ? playerPos : NO_TARGET;
     }
 
     void Zombie::DrawMe()
     {
-        auto srcRect = getSrcRect(zombieStats_.type, orientation_, count_);
+        auto srcRect = getSrcRect(stats_.type, orientation_, count_);
         auto destRect = getOffsetted(rect_, game_->GetOffset());
         sprite_->RenderCopy(srcRect, destRect);
     }
@@ -209,38 +206,54 @@ namespace game
     void Zombie::CollisionsExec(const Duration &duration)
     {
         float elapsed = duration.count() * 1e-9;
-        auto collideRects = game_->GetRects(ObjectsCategory(MAP | ENEMY));
 
-        switch (state_)
-        {
-        case TO_PLAYER:
-        {
-            checkCollision_->Calculate(rect_, collideRects, elapsed);
-            break;
-        }
-        case SHAFFLE:
-        {
-            if (checkCollision_->Calculate(rect_, collideRects, elapsed))
-            {
-                rect_.vel.x *= -1;
-            }
+        rect_.pos += game_->GetOffset();
+        rect_.contact = {};
+        auto rects = game_->GetRects(ObjectsCategory(MAP | PLAYER));
 
-            break;
-        }
-        case ATTACK:
+#ifdef NDEBUG
+        auto renderer = sg::GetEngine().GetRenderer();
+        for (const auto &rect : rects)
         {
-            break;
+            renderer->DrawRect(rect, {160, 160, 0, 255});
         }
-        default:
-            break;
-        }
+
+        renderer->DrawRect(rect_, {255, 100, 0, 255});
+#endif
+
+        // switch (state_)
+        // {
+        // case TO_PLAYER:
+        // {
+        //     checkCollision_->Calculate(offSettedRect, rects, elapsed);
+        //     break;
+        // }
+        // case SHAFFLE:
+        // {
+        //     if (checkCollision_->Calculate(offSettedRect, rects, elapsed))
+        //     {
+        //         rect_.vel.x *= -1;
+        //     }
+
+        //     break;
+        // }
+        // case ATTACK:
+        // {
+        //     break;
+        // }
+        // default:
+        //     break;
+        // }
+
+        checkCollision_->Calculate(rect_, ::Convert<FRectRefs, sg::ICollision::RectsType>(rects), elapsed);       
+        rect_.pos -= game_->GetOffset();
     }
 
     void Zombie::Attack(IdType id)
     {
         auto event = std::make_shared<AttackEvent>();
-        event->setId(id);
-        event->setDamage(zombieStats_.damage);
+        event->SetId(id);
+        event->setDamage(stats_.damage);
         eventer_(event);
     }
 

@@ -3,41 +3,35 @@
 #include <memory>
 
 #include "Types.h"
-#include "CollisionImpl.h"
 #include "Stats.h"
 
 #include "../IInit.h"
 #include "../IGame.h"
 #include "../IObject.h"
-#include "../ICollision.h"
 
+#include <sgraphics/engine/IWindow.hpp>
 #include <sgraphics/engine/ISprite.hpp>
 #include <sgraphics/geometry/types.hpp>
+#include <sgraphics/engine/ICollision.hpp>
 
 namespace game
 {
     class Player final : public IObject
     {
-        enum State
-        {
-            MOVING,
-            STAYING
-        };
-
     public:
-        Player(IGame::Ptr game, Stats::Ptr initData);
+        Player(IGame::Ptr game, PlayerStats &&stats);
         ~Player() override;
 
         void Show(const Duration &) noexcept override;
-        FRectPtr GetRect() const noexcept;
+        const FRectType& GetRect() noexcept;
         CollisionType GetCollisionType() const noexcept override;
         eObjectCategory GetCategory() const noexcept override;
-        std::size_t GetWidth() const noexcept override;
-        std::size_t GetHight() const noexcept override;
-        void OnAttack(Event::Ptr msg) noexcept override;
+        const std::size_t &GetWidth() const noexcept override;
+        const std::size_t &GetHight() const noexcept override;
+        void OnEvent(Event::Ptr msg) noexcept override;
         void OnInput(sg::MousePosType xy) noexcept override;
         IdType GetId() const noexcept override;
-        Stats::Ptr GetStats() const noexcept;
+        const Stats &GetStats() const noexcept;
 
     private:
         void DrawMe(const Duration &duration);
@@ -45,15 +39,12 @@ namespace game
 
     private:
         IGame::Ptr game_;
-        Stats::Ptr stats_;
-        ICollision::Ptr checkCollision_;
+        PlayerStats stats_;
+        sg::ICollision::Ptr checkCollision_;
+        sg::IWindow::Ptr window_;
+        FRectType rect_;
         sg::ISprite::Ptr sprite_;
-        std::uint32_t count_{};
-        Duration updateSprite_{};
-        FRectType realRect_;
-        FRectType screenRect_;
-        PointType mouseOffset_;
-        eOrientation orientation_{eOrientation::RIGHT};
-        float FPS_;
+        FRectType offset_{};
+        PointType mousePosition_{};
     };
 }

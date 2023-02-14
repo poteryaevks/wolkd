@@ -1,5 +1,5 @@
 #include "Player.h"
-#include "CollisionImpl.h"
+#include "../helpers.hpp"
 
 #include <iostream>
 #include <math.h>
@@ -12,54 +12,59 @@ namespace
 {
     using namespace std::chrono_literals;
     const game::PointType SPRITE_SIZE{50, 50};
+    const game::PointType IMG_SIZE{32, 32};
 }
 
 namespace game
 {
-    Player::Player(IGame::Ptr game, Stats::Ptr initData)
+    Player::Player(IGame::Ptr game, PlayerStats &&stats)
         : IObject(),
           game_(game),
-          stats_(initData),
-          checkCollision_(ICollision::Ptr(new DynamicCollision))
+          stats_(std::move(stats)),
+          checkCollision_(sg::ICollision::Create(sg::CollisionType::Dynamic2)),
+          window_(sg::GetEngine().GetWindow()),
+          rect_({{(float)(window_->GetWidth() / 2), (float)(window_->GetHeight() / 2)}, SPRITE_SIZE}),
+          sprite_(sg::GetEngine().CreateSprite(stats_.path, stats_.rgb))
     {
-        FPS_ = stats_->speed / 10;
-        auto window = sg::GetEngine().GetWindow();
-        sprite_ = sg::GetEngine().CreateSprite(stats_->path, stats_->rgb);
-
-        realRect_.pos = stats_->position;
-        realRect_.size = SPRITE_SIZE;
-
-        screenRect_.pos = {(float)(window->GetWidth() / 2), (float)(window->GetHeight() / 2)};
-        screenRect_.size = SPRITE_SIZE;
+        offset_.pos = stats_.position;
+        offset_.size = SPRITE_SIZE;
     }
 
     Player::~Player() = default;
 
-    FRectPtr Player::GetRect() const noexcept
+    const FRectType& Player::GetRect() noexcept
     {
-        return &realRect_;
+        return offset_;
     }
 
     void Player::Show(const Duration &duration) noexcept
     {
         float seconds = duration.count() * 1e-9;
 
-        auto collideRects = game_->GetRects(ObjectsCategory(game::MAP | game::ENEMY));
+        auto rects = game_->GetRects(ObjectsCategory(MAP | ENEMY));
+        checkCollision_->Calculate(rect_, ::Convert<FRectRefs, sg::ICollision::RectsType>(rects), seconds);
 
-        checkCollision_->Calculate(realRect_, collideRects, seconds);
+        offset_.pos += rect_.vel * seconds;
+        mousePosition_ -= rect_.vel * seconds;
 
-        realRect_.pos += realRect_.vel * seconds;
-        mouseOffset_ -= realRect_.vel * seconds;
-
-#ifdef NDEBUG
+#ifdef NDEBUG_
         auto renderer = sg::GetEngine().GetRenderer();
-        renderer->DrawRect(FRectType({{mouseOffset_.x, mouseOffset_.y}, {SPRITE_SIZE.x, SPRITE_SIZE.y}}),
+        renderer->DrawRect(FRectType({{mousePosition_.x, mousePosition_.y}, {SPRITE_SIZE.x, SPRITE_SIZE.y}}),
                            {160, 160, 0, 255});
-#endif
 
-        if (areEqual(mouseOffset_, screenRect_.pos, 1))
+        for (const auto& rect : rect_.contact)
         {
-            realRect_.vel = {0, 0};
+            if (rect)
+            {
+                renderer->DrawRect(*rect, {255, 160, 0, 255});
+            }
+        }
+
+        renderer->DrawRect(rect_, {255, 100, 0, 255});
+#endif
+        if (areEqual(mousePosition_, rect_.pos, 1))
+        {
+            rect_.vel = {0, 0};
         }
 
         DrawMe(duration);
@@ -75,84 +80,78 @@ namespace game
         return PLAYER;
     }
 
-    std::size_t Player::GetWidth() const noexcept
+    const std::size_t &Player::GetWidth() const noexcept
     {
         return SPRITE_SIZE.x;
     }
 
-    std::size_t Player::GetHight() const noexcept
+    const std::size_t &Player::GetHight() const noexcept
     {
         return SPRITE_SIZE.y;
     }
 
-    void Player::OnAttack(Event::Ptr event) noexcept
+    void Player::OnEvent(Event::Ptr event) noexcept
     {
-        AttackEvent *attack = dynamic_cast<AttackEvent *>(event.get());
-        if (attack)
-        {
-            if (stats_->hp > 0)
-                stats_->hp -= attack->getDamage();
+        if (!event)
+            return;
 
-            if (stats_->hp < 0)
-                stats_->hp = 0;
+        switch (event->getType())
+        {
+        case EventType::ATTACK:
+        {
+            auto attackEvent = dynamic_cast<AttackEvent *>(event.get());
+            if (attackEvent)
+            {
+                stats_.hp -= attackEvent->getDamage();
+                stats_.hp = stats_.hp < 0 ? 0 : stats_.hp;
+            }
+            break;
+        }
+        default:
+            break;
         }
     }
 
     IdType Player::GetId() const noexcept
     {
-        return stats_->id;
+        return stats_.id;
     }
 
-    Stats::Ptr Player::GetStats() const noexcept
+    const Stats &Player::GetStats() const noexcept
     {
         return stats_;
     }
 
     void Player::DrawMe(const Duration &duration)
     {
-        State state;
+        static Duration UpdateDur{};
+        static std::uint32_t Count{};
+        static eOrientation orientation{};
 
-        if (realRect_.vel.x == 0 && realRect_.vel.y == 0)
+        orientation = (rect_.vel.x == 0 && rect_.vel.y == 0) ? orientation : toOrientation(rect_.vel);
+        auto update = [&](const Duration &duration, Duration period)
         {
-            updateSprite_ = 0s;
-            state = STAYING;
-        }
-        else
-        {
-            state = MOVING;
-        }
-
-        orientation_ = toOrientation(realRect_.vel);
-
-        switch (state)
-        {
-        case MOVING:
-        {
-            updateSprite_ += duration;
-            if (updateSprite_ > 50ms)
+            UpdateDur += duration;
+            if (period < UpdateDur)
             {
-                updateSprite_ = 0s;
-                count_++;
+                UpdateDur = {};
+                Count++;
             }
+        };
 
-            break;
-        }
-        case STAYING:
+        if (rect_.vel.x != 0 || rect_.vel.y != 0)
         {
-            break;
-        }
-        default:
-            break;
+            update(duration, 50ms);
         }
 
-        FRectType srcRect{{(float)(count_ % 3) * 32, orientation_ * 32}, {32, 32}};
-        sprite_->RenderCopy(srcRect, screenRect_);
+        FRectType srcRect{{(float)(Count % 3) * IMG_SIZE.x, orientation * IMG_SIZE.y}, IMG_SIZE};
+        sprite_->RenderCopy(srcRect, rect_);
     }
 
     void Player::OnInput(sg::MousePosType xy) noexcept
     {
-        mouseOffset_ = {(float)xy.first, (float)xy.second};
-        realRect_.vel = mouseOffset_ - screenRect_.pos;
-        realRect_.vel = realRect_.vel.norm() * stats_->speed;
+        mousePosition_ = {(float)xy.first, (float)xy.second};
+        rect_.vel = mousePosition_ - rect_.pos;
+        rect_.vel = rect_.vel.norm() * stats_.speed;
     }
-} // namespace zgame
+} // namespace game

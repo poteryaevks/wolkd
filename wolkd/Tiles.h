@@ -26,20 +26,22 @@ namespace game
 
         virtual ~ITile() = default;
         virtual CollisionType getType() = 0;
-        virtual void show(const FVectType &, const Duration&) noexcept = 0;
+        virtual void show(const FVectType &, const Duration &) noexcept = 0;
 
-        inline FRectType OffsettRect(const FVectType &offset)
+        const FRectType& GetRect() { return offSettedRect_; }
+
+    protected:
+        inline FRectType GetOffSettedRect(const FVectType &offset)
         {
             FRectType rect = rect_;
             rect.pos += offset;
+            offSettedRect_ = rect;
             return rect;
         }
 
-        FRectPtr GetRect() { return &rect_; }
-
-    protected:
         sg::ISprite::Ptr sprite_;
         FRectType rect_;
+        FRectType offSettedRect_;
     };
 
     using TileConstuctor = std::function<ITile::Ptr(FRectType, const std::string &, const sg::RgbType &)>;
@@ -55,9 +57,9 @@ namespace game
 
         ~CarTile() = default;
         CollisionType getType() override { return SOLID; }
-        void show(const FVectType &offset, const Duration&) noexcept override
+        void show(const FVectType &offset, const Duration &) noexcept override
         {
-            auto rect = OffsettRect(offset);
+            auto rect = GetOffSettedRect(offset);
             sprite_->RenderCopy(GROUND, rect);
             sprite_->RenderCopy(ROAD_H, rect);
             sprite_->RenderCopy(CAR1, rect);
@@ -84,9 +86,9 @@ namespace game
 
         ~TreeTile() = default;
         CollisionType getType() override { return SOLID; }
-        void show(const FVectType &offset, const Duration&) noexcept override
+        void show(const FVectType &offset, const Duration &) noexcept override
         {
-            auto rect = OffsettRect(offset);
+            auto rect = GetOffSettedRect(offset);
             sprite_->RenderCopy(GROUND, rect);
             sprite_->RenderCopy(TREE, rect);
         }
@@ -108,9 +110,9 @@ namespace game
         ~GWallTile() = default;
 
         CollisionType getType() override { return SOLID; }
-        void show(const FVectType &offset, const Duration&) noexcept override
+        void show(const FVectType &offset, const Duration &) noexcept override
         {
-            auto rect = OffsettRect(offset);
+            auto rect = GetOffSettedRect(offset);
             sprite_->RenderCopy(GROUND, rect);
             sprite_->RenderCopy(GWALL_H, rect);
         }
@@ -130,10 +132,10 @@ namespace game
 
         ~TankTile() = default;
         CollisionType getType() override { return SOLID; }
-        void show(const FVectType &offset, const Duration& duration) noexcept override
+        void show(const FVectType &offset, const Duration &duration) noexcept override
         {
             using namespace std::chrono_literals;
-            auto rect = OffsettRect(offset);
+            auto rect = GetOffSettedRect(offset);
             elapsedTime_ += duration;
 
             if (elapsedTime_ > 100ms)
@@ -165,9 +167,9 @@ namespace game
         ~MonumentTile() = default;
 
         CollisionType getType() override { return SOLID; }
-        void show(const FVectType &offset, const Duration&) noexcept override
+        void show(const FVectType &offset, const Duration &) noexcept override
         {
-            auto rect = OffsettRect(offset);
+            auto rect = GetOffSettedRect(offset);
             sprite_->RenderCopy(GROUND, rect);
             sprite_->RenderCopy(MONUMENT, rect);
         }
@@ -188,9 +190,9 @@ namespace game
         ~NoneTile() = default;
 
         CollisionType getType() override { return NONE; }
-        void show(const FVectType &offset, const Duration&) noexcept override
+        void show(const FVectType &offset, const Duration &) noexcept override
         {
-            auto rect = OffsettRect(offset);
+            auto rect = GetOffSettedRect(offset);
             sprite_->RenderCopy(GROUND, rect);
         }
 
@@ -214,9 +216,9 @@ namespace game
         ~HouseLeftTile() = default;
 
         CollisionType getType() override { return SOLID; }
-        void show(const FVectType &offset, const Duration&) noexcept override
+        void show(const FVectType &offset, const Duration &) noexcept override
         {
-            auto rect = OffsettRect(offset);
+            auto rect = GetOffSettedRect(offset);
             FRectType temp = prevRect_;
             temp.pos += offset;
             sprite_->RenderCopy(GROUND, temp);
@@ -246,9 +248,9 @@ namespace game
         ~HouseRightTile() = default;
 
         CollisionType getType() override { return SOLID; }
-        void show(const FVectType &offset, const Duration&) noexcept override
+        void show(const FVectType &offset, const Duration &) noexcept override
         {
-            auto rect = OffsettRect(offset);
+            auto rect = GetOffSettedRect(offset);
             FRectType temp = prevRect_;
             temp.pos += offset;
 
@@ -273,9 +275,9 @@ namespace game
         ~GroundTile() = default;
 
         CollisionType getType() override { return NONE; }
-        void show(const FVectType &offset, const Duration&) noexcept override
+        void show(const FVectType &offset, const Duration &) noexcept override
         {
-            auto rect = OffsettRect(offset);
+            auto rect = GetOffSettedRect(offset);
             sprite_->RenderCopy(GROUND, rect);
         }
 
@@ -294,9 +296,9 @@ namespace game
         ~RoadITile() = default;
 
         CollisionType getType() override { return NONE; }
-        void show(const FVectType &offset, const Duration&) noexcept override
+        void show(const FVectType &offset, const Duration &) noexcept override
         {
-            auto rect = OffsettRect(offset);
+            auto rect = GetOffSettedRect(offset);
             sprite_->RenderCopy(GROUND, rect);
             sprite_->RenderCopy(ROAD_V, rect);
         }
@@ -317,9 +319,9 @@ namespace game
         ~Road_Tile() = default;
 
         CollisionType getType() override { return NONE; }
-        void show(const FVectType &offset, const Duration&) noexcept override
+        void show(const FVectType &offset, const Duration &) noexcept override
         {
-            auto rect = OffsettRect(offset);
+            auto rect = GetOffSettedRect(offset);
             sprite_->RenderCopy(GROUND, rect);
             sprite_->RenderCopy(ROAD_H, rect);
         }
@@ -339,9 +341,9 @@ namespace game
 
         ~RoadrTile() = default;
         CollisionType getType() override { return NONE; }
-        void show(const FVectType &offset, const Duration&) noexcept override
+        void show(const FVectType &offset, const Duration &) noexcept override
         {
-            auto rect = OffsettRect(offset);
+            auto rect = GetOffSettedRect(offset);
             sprite_->RenderCopy(GROUND, rect);
             sprite_->RenderCopy(ROAD_r, rect);
         }

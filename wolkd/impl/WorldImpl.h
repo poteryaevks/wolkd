@@ -15,11 +15,11 @@ namespace game
     class WorldImpl final : public IWorld
     {
     public:
-        WorldImpl(IGame::Ptr game, Stats::Ptr initData);
+        WorldImpl(IGame::Ptr game, WorldStats&& stats);
         ~WorldImpl();
 
         void Show(const Duration &) noexcept override;
-        std::vector<FRectPtr> GetRects() const noexcept override;
+        const FRectRefs& GetRects() const noexcept override;
         std::size_t GetWidth() const noexcept override;
         std::size_t GetHight() const noexcept override;
 
@@ -32,9 +32,9 @@ namespace game
 
     private:
         IGame::Ptr game_;
-        Stats::Ptr stats_;
-        WorldStats* m_worldStats;
+        WorldStats stats_;
         std::vector<ITile::Ptr> tiles_;
         std::vector<std::string> world_;
+        FRectRefs rects_;
     };
 }

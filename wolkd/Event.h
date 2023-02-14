@@ -4,7 +4,7 @@
 
 namespace game
 {
-    enum eEventTypes
+    enum EventType
     {
         OUT_OF_SCREEN,
         MOVE_LEFT,
@@ -20,14 +20,12 @@ namespace game
     public:
         using Ptr = std::shared_ptr<Event>;
         virtual ~Event() = default;
-
-        void setId(IdType id) { id_ = id; }
-        eEventTypes getType() const { return type_; }
-        IdType getId() const { return id_; }
+        void SetId(IdType id) { id_ = id; }
+        EventType getType() const { return type_; }
+        IdType GetId() const { return id_; }
 
     protected:
-        Event() = default;
-        eEventTypes type_;
+        EventType type_;
         IdType id_;
     };
 
@@ -37,7 +35,7 @@ namespace game
         OutOfScreenEvent()
             : Event()
         {
-            type_ = eEventTypes::OUT_OF_SCREEN;
+            type_ = EventType::OUT_OF_SCREEN;
         }
 
         ~OutOfScreenEvent() = default;
@@ -59,7 +57,7 @@ namespace game
         AttackEvent()
             : Event()
         {
-            type_ = eEventTypes::ATTACK;
+            type_ = EventType::ATTACK;
         }
 
         ~AttackEvent() = default;

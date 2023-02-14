@@ -18,7 +18,7 @@ namespace game
     {
     public:
         using Ptr = std::shared_ptr<IWorld>;
-        virtual std::vector<FRectPtr> GetRects() const noexcept = 0;
+        virtual const FRectRefs& GetRects() const noexcept = 0;
         virtual void Show(const Duration& duration) noexcept = 0;
         virtual std::size_t GetWidth() const noexcept = 0;
         virtual std::size_t GetHight() const noexcept = 0;

@@ -13,7 +13,7 @@ namespace game
     {
     public:
         using Ptr = IGame*;
-        virtual std::vector<FRectPtr> GetRects(ObjectsCategory) const noexcept = 0;
+        virtual FRectRefs GetRects(ObjectsCategory) const noexcept = 0;
         virtual FVectType GetOffset() const noexcept = 0;
         virtual PointType GetPlayerPos() const noexcept = 0;
         virtual IdType GetPlayerId() const noexcept = 0;

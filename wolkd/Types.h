@@ -1,7 +1,5 @@
 #pragma once
 
-// #include <SDL2/SDL.h>
-
 #include <vector>
 #include <map>
 #include <memory>
@@ -17,7 +15,10 @@ namespace game
 {
     using IdType = std::uint32_t;
     using FRectType = olc::aabb::rect<float>;
-    using FRectPtr = const FRectType*;
+    using FRectPtr = FRectType*;
+    using FRectRef = std::reference_wrapper<const FRectType>;
+    using FRectRefs = std::vector<FRectRef>;
+    using FRectPtrs = std::vector<FRectPtr>;
     using FVectType = olc::vf2d;
     using PointType = FVectType;
     using Duration = sg::BaseGame::Duration;
@@ -124,22 +125,21 @@ namespace game
 
         if (angle >= 45 && angle <= 135)
         {
-            return game::DOWN;
+            return eOrientation::DOWN;
         }
         else if (angle > 135 && angle <= 225)
         {
-            return game::LEFT;
+            return eOrientation::LEFT;
         }
         else if (angle > 225 && angle <= 315)
         {
-            return game::UP;
+            return eOrientation::UP;
         }
         else
         {
-            return game::RIGHT;
+            return eOrientation::RIGHT;
         }
     }
-
 }
 
 Q_DECLARE_FLAGS(ObjectsCategory, game::eObjectCategory)

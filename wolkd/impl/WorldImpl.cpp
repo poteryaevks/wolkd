@@ -5,19 +5,18 @@
 
 namespace
 {
-    constexpr std::uint8_t TILE_SIZE{60};
+    const game::PointType TILE_SIZE{60, 60};
 }
 
 namespace game
 {
 
-    WorldImpl::WorldImpl(IGame::Ptr game, Stats::Ptr stats)
+    WorldImpl::WorldImpl(IGame::Ptr game, WorldStats &&stats)
         : IWorld(),
           game_(game),
-          stats_(stats),
-          m_worldStats(dynamic_cast<WorldStats *>(stats.get()))
+          stats_(std::move(stats))
     {
-        std::ifstream file(m_worldStats->map, std::ios::binary);
+        std::ifstream file(stats_.map, std::ios::binary);
         if (!file)
         {
         }
@@ -27,7 +26,7 @@ namespace game
 
     WorldImpl::~WorldImpl()
     {
-        std::ofstream file(m_worldStats->map, std::ios::binary);
+        std::ofstream file(stats_.map, std::ios::binary);
         if (file)
         {
             save(file);
@@ -42,19 +41,9 @@ namespace game
         }
     }
 
-    std::vector<FRectPtr> WorldImpl::GetRects() const noexcept
+    const FRectRefs &WorldImpl::GetRects() const noexcept
     {
-        std::vector<FRectPtr> rects;
-
-        for (const auto &tile : tiles_)
-        {
-            if (tile->getType() == SOLID)
-            {
-                rects.emplace_back(tile->GetRect());
-            }
-        }
-
-        return std::move(rects);
+        return rects_;
     }
 
     bool WorldImpl::isWayElement(char ch)
@@ -108,11 +97,12 @@ namespace game
             {
                 auto ch = map[y][x];
                 tiles.emplace_back(
-                    TILE_FACTORY.Create(
-                        ch,
-                        FRectType({{x * TILE_SIZE, y * TILE_SIZE}, {TILE_SIZE, TILE_SIZE}}),
-                        m_worldStats->tiles,
-                        m_worldStats->rgb));
+                    TILE_FACTORY.Create(ch, FRectType({{x * TILE_SIZE.x, y * TILE_SIZE.y}, TILE_SIZE}), stats_.tiles, stats_.rgb));
+
+                if (tiles.back()->getType() == SOLID)
+                {
+                    rects_.emplace_back(tiles.back()->GetRect());
+                }
             }
         }
 

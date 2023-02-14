@@ -20,13 +20,13 @@ namespace game
 
         PointType GetPlayerPos() const noexcept override;
         FVectType GetOffset() const noexcept override;
-        std::vector<FRectPtr> GetRects(ObjectsCategory category) const noexcept override;
+        FRectRefs GetRects(ObjectsCategory category) const noexcept override;
         IdType GetPlayerId() const noexcept override;
-        void addEvent(Event::Ptr event) noexcept;
+        void OnEvent(Event::Ptr event) noexcept;
         void InputEventHandler(sg::IEvent::Ptr event);
 
     private:
-        void printStats();
+        void DrawPlayerStats();
 
     private:
         std::list<IObject::Ptr> m_zombies;
