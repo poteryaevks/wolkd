@@ -3,19 +3,18 @@ cmake_minimum_required(VERSION 3.11.0)
 set(TARGET_NAME wolkd)
 
 file(GLOB _SOURCE_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/cpp/*.cpp
-    ${CMAKE_CURRENT_SOURCE_DIR}/cpp/*.c
-    ${CMAKE_CURRENT_SOURCE_DIR}/cpp/*.pb.cc
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/impl/*.cpp
     )
 
-file (GLOB _HEADER_FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/hpp/*.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/hpp/*.hpp
-    )
+# file (GLOB _HEADER_FILES
+    # ${CMAKE_CURRENT_SOURCE_DIR}/hpp/*.h
+    # ${CMAKE_CURRENT_SOURCE_DIR}/hpp/*.hpp
+    # )
 
 add_executable(${TARGET_NAME}
     ${_SOURCE_FILES}
-    ${_HEADER_FILES}
+    # ${_HEADER_FILES}
     )
 
 target_include_directories(${TARGET_NAME} PRIVATE

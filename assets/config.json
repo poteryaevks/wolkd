@@ -4,7 +4,7 @@
 
 				"id": 13,
                 "path": "assets/zombies.png",
-                "speed": 35,
+                "speed": 235,
                 "type": 3,
 				"anger": 0,
                 "position": [600, 750],
@@ -16,7 +16,7 @@
 
 				"id": 12,
                 "path": "assets/zombies.png",
-                "speed": 20,
+                "speed": 220,
 				"anger": 0,
                 "type": 5,
                 "position": [900, 650],
@@ -29,7 +29,7 @@
 
 				"id": 11,
                 "path": "assets/zombies.png",
-                "speed": 80,
+                "speed": 280,
                 "position": [600, 500],
 				"hp": 100,
 				"rgb": [1, 0, 0]

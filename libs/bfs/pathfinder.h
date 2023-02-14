@@ -39,7 +39,7 @@ class Graph
     };
 
     using nodes_type = std::vector<std::unique_ptr<Node>>;
-    using point_type = olc::vf2d;
+    using PointType = olc::vf2d;
 
 public:
 
@@ -56,13 +56,13 @@ public:
     //! \param finish
     //! \return
     //!
-    std::list<point_type> findWay(point_type p1, point_type p2);
+    std::list<PointType> findWay(PointType p1, PointType p2);
 
     //!
     //! \brief addNode
     //! \param node
     //!
-    void addNode(point_type node, std::list<point_type> neighbours);
+    void addNode(PointType node, std::list<PointType> neighbours);
 
 private:
 
