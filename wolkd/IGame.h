@@ -15,7 +15,7 @@ namespace game
         using Ptr = IGame*;
         virtual FRectRefs GetRects(ObjectsCategory) const noexcept = 0;
         virtual FVectType GetOffset() const noexcept = 0;
-        virtual PointType GetPlayerPos() const noexcept = 0;
+        virtual const FRectType& GetPlayerRect() const noexcept = 0;
         virtual IdType GetPlayerId() const noexcept = 0;
         virtual ~IGame() = default;
     };

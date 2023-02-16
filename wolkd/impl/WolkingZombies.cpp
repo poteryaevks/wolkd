@@ -73,18 +73,17 @@ namespace game
         DrawPlayerStats();
     }
 
-    void WolkingZombies::OnQuit()
-    {
-    }
+    void WolkingZombies::OnQuit() {}
 
-    PointType WolkingZombies::GetPlayerPos() const noexcept
+    const FRectType& WolkingZombies::GetPlayerRect() const noexcept
     {
-        return player_->GetRect().pos;
+        return player_->GetRect();
     }
 
     FVectType WolkingZombies::GetOffset() const noexcept
     {
-        return (defPosition_ - player_->GetRect().pos);
+        auto pointer = dynamic_cast<Player *>(player_.get());
+        return (defPosition_ - pointer->offset_.pos);
     }
 
     FRectRefs WolkingZombies::GetRects(ObjectsCategory category) const noexcept
@@ -100,6 +99,7 @@ namespace game
                 result.push_back(rect);
             }
         }
+
         if (category & eObjectCategory::ENEMY)
         {
             for (const auto &object : m_zombies)
@@ -107,6 +107,7 @@ namespace game
                 result.push_back(object->GetRect());
             }
         }
+
         if (category & eObjectCategory::PLAYER)
         {
             result.push_back(player_->GetRect());

@@ -18,7 +18,7 @@ namespace game
         void OnUpdate(const Duration &) override;
         void OnQuit() override;
 
-        PointType GetPlayerPos() const noexcept override;
+        const FRectType& GetPlayerRect() const noexcept override;
         FVectType GetOffset() const noexcept override;
         FRectRefs GetRects(ObjectsCategory category) const noexcept override;
         IdType GetPlayerId() const noexcept override;

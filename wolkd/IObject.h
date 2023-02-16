@@ -16,7 +16,7 @@ namespace game
         using Ptr = std::shared_ptr<IObject>;
         virtual CollisionType GetCollisionType() const noexcept = 0;
         virtual eObjectCategory GetCategory() const noexcept = 0;
-        virtual const FRectType& GetRect() noexcept = 0;
+        virtual const FRectType& GetRect() const noexcept = 0;
         virtual void Show(const Duration &) noexcept = 0;
         virtual const std::size_t &GetWidth() const noexcept = 0;
         virtual const std::size_t &GetHight() const noexcept = 0;

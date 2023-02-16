@@ -18,12 +18,13 @@ namespace game
 {
     class Player final : public IObject
     {
+        friend class WolkingZombies;
     public:
         Player(IGame::Ptr game, PlayerStats &&stats);
         ~Player() override;
 
         void Show(const Duration &) noexcept override;
-        const FRectType& GetRect() noexcept;
+        const FRectType& GetRect() const noexcept override;
         CollisionType GetCollisionType() const noexcept override;
         eObjectCategory GetCategory() const noexcept override;
         const std::size_t &GetWidth() const noexcept override;
@@ -40,7 +41,8 @@ namespace game
     private:
         IGame::Ptr game_;
         PlayerStats stats_;
-        sg::ICollision::Ptr checkCollision_;
+        sg::ICollision::Ptr dynCollision_;
+        sg::ICollision::Ptr staticCollision_;
         sg::IWindow::Ptr window_;
         FRectType rect_;
         sg::ISprite::Ptr sprite_;

@@ -21,7 +21,8 @@ namespace game
         : IObject(),
           game_(game),
           stats_(std::move(stats)),
-          checkCollision_(sg::ICollision::Create(sg::CollisionType::Dynamic2)),
+          dynCollision_(sg::ICollision::Create(sg::CollisionType::Dynamic2)),
+          staticCollision_(sg::ICollision::Create(sg::CollisionType::Static)),
           window_(sg::GetEngine().GetWindow()),
           rect_({{(float)(window_->GetWidth() / 2), (float)(window_->GetHeight() / 2)}, SPRITE_SIZE}),
           sprite_(sg::GetEngine().CreateSprite(stats_.path, stats_.rgb))
@@ -32,27 +33,36 @@ namespace game
 
     Player::~Player() = default;
 
-    const FRectType& Player::GetRect() noexcept
+    const FRectType &Player::GetRect() const noexcept
     {
-        return offset_;
+        return rect_;
     }
 
     void Player::Show(const Duration &duration) noexcept
     {
+        auto renderer = sg::GetEngine().GetRenderer();
         float seconds = duration.count() * 1e-9;
-
-        auto rects = game_->GetRects(ObjectsCategory(MAP | ENEMY));
-        checkCollision_->Calculate(rect_, ::Convert<FRectRefs, sg::ICollision::RectsType>(rects), seconds);
+        auto tiles = game_->GetRects(ObjectsCategory(MAP));
+        // auto movingObjects = game_->GetRects(ObjectsCategory(ENEMY));
+        dynCollision_->Calculate(rect_, ::Convert<FRectRefs, sg::ICollision::RectsType>(tiles), seconds);
+        // if (staticCollision_->Calculate(rect_, ::Convert<FRectRefs, sg::ICollision::RectsType>(movingObjects), seconds))
+        // {
+            // for (const auto &rect : rect_.contact)
+            // {
+            // }
+        // }
 
         offset_.pos += rect_.vel * seconds;
         mousePosition_ -= rect_.vel * seconds;
 
 #ifdef NDEBUG_
-        auto renderer = sg::GetEngine().GetRenderer();
-        renderer->DrawRect(FRectType({{mousePosition_.x, mousePosition_.y}, {SPRITE_SIZE.x, SPRITE_SIZE.y}}),
-                           {160, 160, 0, 255});
+        renderer->DrawRect(FRectType({{mousePosition_.x, mousePosition_.y}, {SPRITE_SIZE.x, SPRITE_SIZE.y}}), {160, 160, 0, 255});
+        for (const auto &rect : movingObjects)
+        {
+            renderer->DrawRect(rect, {160, 160, 0, 255});
+        }
 
-        for (const auto& rect : rect_.contact)
+        for (const auto &rect : rect_.contact)
         {
             if (rect)
             {
