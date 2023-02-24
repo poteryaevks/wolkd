@@ -58,6 +58,7 @@ find_package(Boost 1.62
 
 find_package(SG
     COMPONENTS
+    sdl_font_cache
     convertion
     geometry
     engine
