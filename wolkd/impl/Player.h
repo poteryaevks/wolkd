@@ -11,6 +11,7 @@
 
 #include <sgraphics/engine/IWindow.hpp>
 #include <sgraphics/engine/ISprite.hpp>
+#include <sgraphics/engine/IEventer.hpp>
 #include <sgraphics/geometry/types.hpp>
 #include <sgraphics/engine/ICollision.hpp>
 
@@ -30,7 +31,6 @@ namespace game
         const std::size_t &GetWidth() const noexcept override;
         const std::size_t &GetHight() const noexcept override;
         void OnEvent(Event::Ptr msg) noexcept override;
-        void OnInput(sg::MousePosType xy) noexcept override;
         IdType GetId() const noexcept override;
         const Stats &GetStats() const noexcept;
 
@@ -44,9 +44,10 @@ namespace game
         sg::ICollision::Ptr dynCollision_;
         sg::ICollision::Ptr staticCollision_;
         sg::IWindow::Ptr window_;
+        sg::IEventer::Ptr eventer_;
         FRectType rect_;
         sg::ISprite::Ptr sprite_;
         FRectType offset_{};
-        PointType mousePosition_{};
+        sg::MousePosType mousePosition_{};
     };
 }

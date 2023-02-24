@@ -17,13 +17,13 @@ namespace game
 
         void OnUpdate(const Duration &) override;
         void OnQuit() override;
+        void OnCreate() override;
 
         const FRectType& GetPlayerRect() const noexcept override;
         FVectType GetOffset() const noexcept override;
         FRectRefs GetRects(ObjectsCategory category) const noexcept override;
         IdType GetPlayerId() const noexcept override;
         void OnEvent(Event::Ptr event) noexcept;
-        void InputEventHandler(sg::IEvent::Ptr event);
 
     private:
         void DrawPlayerStats();

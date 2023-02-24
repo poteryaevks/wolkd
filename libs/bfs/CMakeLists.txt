@@ -15,14 +15,12 @@ add_library(${TARGET_NAME} STATIC
     )
 
 target_include_directories(${TARGET_NAME} PUBLIC
-    ${SG_INCLUDE_DIRS}
+    ${Sgraphics_INCLUDE_DIRS}
     )
 
 
-message("!SG_INCLUDE_DIRS: ${SG_INCLUDE_DIRS}")
-
 target_link_libraries(${TARGET_NAME} PRIVATE
-    SG::geometry
+    Sgraphics::geometry
     )
 
 set_target_properties(${TARGET_NAME} PROPERTIES

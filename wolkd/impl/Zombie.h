@@ -34,10 +34,9 @@ namespace game
         void OnEvent(Event::Ptr event) noexcept override;
         IdType GetId() const noexcept override;
         const Stats &GetStats() const noexcept;
-        void OnInput(sg::MousePosType xy) noexcept override;
 
     private:
-        State UpdateState(const FRectType& player);
+        State UpdateState(const FRectType &player);
         void DrawMe(const Duration &);
         void Shuffle(const Duration &);
         void Collide(const Duration &, State);

@@ -23,11 +23,7 @@ namespace game
         : sg::BaseGame(title)
     {
         // static IdType CurrentId{};
-        auto eventer = sg::GetEngine().GetEventer();
-        if (eventer)
-        {
-            eventer->AddEventHandler(*this, &WolkingZombies::InputEventHandler);
-        }
+        // auto eventer = sg::GetEngine().GetEventer();
 
         auto initializer = std::make_shared<JsInit>("assets/config.json");
 
@@ -74,6 +70,7 @@ namespace game
     }
 
     void WolkingZombies::OnQuit() {}
+    void WolkingZombies::OnCreate() {}
 
     const FRectType& WolkingZombies::GetPlayerRect() const noexcept
     {
@@ -162,30 +159,5 @@ namespace game
         renderer->DrawRect(FRectType({{20, 20}, {FULL_HP * 2, 20}}), {160, 150, 150, 150}, true);
         renderer->DrawRect(FRectType({{20, 20}, {hp * 2, 20}}), {190, 37, 37, 255}, true);
         renderer->DrawRect(FRectType({{20, 20}, {FULL_HP * 2, 20}}), {0, 0, 0, 255});
-    }
-
-    void WolkingZombies::InputEventHandler(sg::IEvent::Ptr event)
-    {
-        if (!event)
-        {
-            return;
-        }
-
-        switch (event->GetType())
-        {
-        case sg::EventType::MouseButtonDown:
-        {
-            auto xy = event->GetMousePosition();
-            player_->OnInput(xy);
-            break;
-        }
-        case sg::EventType::Quit:
-        {
-            quit_ = true;
-            break;
-        }
-        default:
-            break;
-        }
     }
 }

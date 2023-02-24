@@ -20,7 +20,6 @@ namespace game
         virtual void Show(const Duration &) noexcept = 0;
         virtual const std::size_t &GetWidth() const noexcept = 0;
         virtual const std::size_t &GetHight() const noexcept = 0;
-        virtual void OnInput(sg::MousePosType xy) noexcept = 0;
         virtual void OnEvent(Event::Ptr) noexcept = 0;
         virtual IdType GetId() const noexcept = 0;
         virtual const Stats &GetStats() const noexcept = 0;

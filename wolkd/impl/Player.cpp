@@ -24,6 +24,7 @@ namespace game
           dynCollision_(sg::ICollision::Create(sg::CollisionType::Dynamic2)),
           staticCollision_(sg::ICollision::Create(sg::CollisionType::Static)),
           window_(sg::GetEngine().GetWindow()),
+          eventer_(sg::GetEngine().GetEventer()),
           rect_({{(float)(window_->GetWidth() / 2), (float)(window_->GetHeight() / 2)}, SPRITE_SIZE}),
           sprite_(sg::GetEngine().CreateSprite(stats_.path, stats_.rgb))
     {
@@ -40,6 +41,10 @@ namespace game
 
     void Player::Show(const Duration &duration) noexcept
     {
+            mousePosition_ = eventer_->MousePosition();
+            rect_.vel = mousePosition_ - rect_.pos;
+            rect_.vel = rect_.vel.norm() * stats_.speed;
+
         auto renderer = sg::GetEngine().GetRenderer();
         float seconds = duration.count() * 1e-9;
         auto tiles = game_->GetRects(ObjectsCategory(MAP));
@@ -47,9 +52,9 @@ namespace game
         dynCollision_->Calculate(rect_, ::Convert<FRectRefs, sg::ICollision::RectsType>(tiles), seconds);
         // if (staticCollision_->Calculate(rect_, ::Convert<FRectRefs, sg::ICollision::RectsType>(movingObjects), seconds))
         // {
-            // for (const auto &rect : rect_.contact)
-            // {
-            // }
+        // for (const auto &rect : rect_.contact)
+        // {
+        // }
         // }
 
         offset_.pos += rect_.vel * seconds;
@@ -156,12 +161,5 @@ namespace game
 
         FRectType srcRect{{(float)(Count % 3) * IMG_SIZE.x, orientation * IMG_SIZE.y}, IMG_SIZE};
         sprite_->RenderCopy(srcRect, rect_);
-    }
-
-    void Player::OnInput(sg::MousePosType xy) noexcept
-    {
-        mousePosition_ = {(float)xy.first, (float)xy.second};
-        rect_.vel = mousePosition_ - rect_.pos;
-        rect_.vel = rect_.vel.norm() * stats_.speed;
     }
 } // namespace game

@@ -227,8 +227,4 @@ namespace game
             ElapsedFromAttack = 0s;
         }
     }
-
-    void Zombie::OnInput(sg::MousePosType xy) noexcept
-    {
-    }
 }

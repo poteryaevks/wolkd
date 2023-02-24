@@ -56,7 +56,7 @@ find_package(Boost 1.62
    REQUIRED
    )
 
-find_package(SG
+find_package(Sgraphics
     COMPONENTS
     sdl_font_cache
     convertion
@@ -64,10 +64,6 @@ find_package(SG
     engine
     REQUIRED
     )
-
-if(SG_FOUND)
-    message("SG_INCLUDE_DIRS: ${SG_INCLUDE_DIRS}")
-endif()
 
 add_subdirectory(wolkd)
 add_subdirectory(libs)
