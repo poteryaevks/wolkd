@@ -21,7 +21,7 @@ namespace game
     using FRectPtrs = std::vector<FRectPtr>;
     using FVectType = olc::vf2d;
     using PointType = FVectType;
-    using Duration = sg::BaseGame::Duration;
+    using Duration = sgraphics::BaseGame::Duration;
 
     enum eObjectCategory
     {

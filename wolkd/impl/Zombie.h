@@ -44,13 +44,13 @@ namespace game
 
     private:
         IGame::Ptr game_;
-        sg::IRenderer::Ptr renderer_;
+        sgraphics::IRenderer::Ptr renderer_;
         FRectType realRect_;
         FRectType rect_;
         ZombieStats stats_;
-        sg::ICollision::Ptr dynCollision_;
-        sg::ICollision::Ptr staticCollision_;
-        sg::ISprite::Ptr sprite_;
+        sgraphics::ICollision::Ptr dynCollision_;
+        sgraphics::ICollision::Ptr staticCollision_;
+        sgraphics::ISprite::Ptr sprite_;
         State prevState_;
     };
 }

@@ -9,7 +9,7 @@
 
 namespace game
 {
-    class WolkingZombies final : public IGame, public sg::BaseGame
+    class WolkingZombies final : public IGame, public sgraphics::BaseGame
     {
     public:
         WolkingZombies(const std::string &title);

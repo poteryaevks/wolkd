@@ -52,15 +52,15 @@ namespace game
     Zombie::Zombie(IGame::Ptr game, ZombieStats &&stats)
         : IObject(),
           game_(game),
-          renderer_(sg::GetEngine().GetRenderer()),
+          renderer_(sgraphics::GetEngine().GetRenderer()),
           stats_(std::move(stats)),
-          dynCollision_(sg::ICollision::Create(sg::CollisionType::Dynamic2)),
-          staticCollision_(sg::ICollision::Create(sg::CollisionType::Static))
+          dynCollision_(sgraphics::ICollision::Create(sgraphics::CollisionType::Dynamic2)),
+          staticCollision_(sgraphics::ICollision::Create(sgraphics::CollisionType::Static))
     {
         realRect_.pos = stats_.position;
         realRect_.size = SPRITE_SIZE;
         realRect_.vel = {stats_.speed / 2, 0};
-        sprite_ = sg::GetEngine().CreateSprite(stats_.path, stats_.rgb);
+        sprite_ = sgraphics::GetEngine().CreateSprite(stats_.path, stats_.rgb);
     }
 
     Zombie::~Zombie() = default;
@@ -191,7 +191,7 @@ namespace game
     {
         float elapsed = duration.count() * 1e-9;
         auto tiles = game_->GetRects(ObjectsCategory(MAP));
-        bool collision = dynCollision_->Calculate(rect_, ::Convert<FRectRefs, sg::ICollision::RectsType>(tiles), elapsed);
+        bool collision = dynCollision_->Calculate(rect_, ::Convert<FRectRefs, sgraphics::ICollision::RectsType>(tiles), elapsed);
 #ifdef NDEBUG_
         for (const auto &tile : tiles)
         {

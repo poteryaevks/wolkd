@@ -21,12 +21,12 @@ namespace game
         : IObject(),
           game_(game),
           stats_(std::move(stats)),
-          dynCollision_(sg::ICollision::Create(sg::CollisionType::Dynamic2)),
-          staticCollision_(sg::ICollision::Create(sg::CollisionType::Static)),
-          window_(sg::GetEngine().GetWindow()),
-          eventer_(sg::GetEngine().GetEventer()),
+          dynCollision_(sgraphics::ICollision::Create(sgraphics::CollisionType::Dynamic2)),
+          staticCollision_(sgraphics::ICollision::Create(sgraphics::CollisionType::Static)),
+          window_(sgraphics::GetEngine().GetWindow()),
+          eventer_(sgraphics::GetEngine().GetEventer()),
           rect_({{(float)(window_->GetWidth() / 2), (float)(window_->GetHeight() / 2)}, SPRITE_SIZE}),
-          sprite_(sg::GetEngine().CreateSprite(stats_.path, stats_.rgb))
+          sprite_(sgraphics::GetEngine().CreateSprite(stats_.path, stats_.rgb))
     {
         offset_.pos = stats_.position;
         offset_.size = SPRITE_SIZE;
@@ -45,12 +45,12 @@ namespace game
             rect_.vel = mousePosition_ - rect_.pos;
             rect_.vel = rect_.vel.norm() * stats_.speed;
 
-        auto renderer = sg::GetEngine().GetRenderer();
+        auto renderer = sgraphics::GetEngine().GetRenderer();
         float seconds = duration.count() * 1e-9;
         auto tiles = game_->GetRects(ObjectsCategory(MAP));
         // auto movingObjects = game_->GetRects(ObjectsCategory(ENEMY));
-        dynCollision_->Calculate(rect_, ::Convert<FRectRefs, sg::ICollision::RectsType>(tiles), seconds);
-        // if (staticCollision_->Calculate(rect_, ::Convert<FRectRefs, sg::ICollision::RectsType>(movingObjects), seconds))
+        dynCollision_->Calculate(rect_, ::Convert<FRectRefs, sgraphics::ICollision::RectsType>(tiles), seconds);
+        // if (staticCollision_->Calculate(rect_, ::Convert<FRectRefs, sgraphics::ICollision::RectsType>(movingObjects), seconds))
         // {
         // for (const auto &rect : rect_.contact)
         // {

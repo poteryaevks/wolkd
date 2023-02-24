@@ -20,10 +20,10 @@ namespace
 namespace game
 {
     WolkingZombies::WolkingZombies(const std::string &title)
-        : sg::BaseGame(title)
+        : sgraphics::BaseGame(title)
     {
         // static IdType CurrentId{};
-        // auto eventer = sg::GetEngine().GetEventer();
+        // auto eventer = sgraphics::GetEngine().GetEventer();
 
         auto initializer = std::make_shared<JsInit>("assets/config.json");
 
@@ -46,7 +46,7 @@ namespace game
             m_zombies.push_back(std::move(zombie));
         }
 
-        auto window = sg::GetEngine().GetWindow();
+        auto window = sgraphics::GetEngine().GetWindow();
 
         const auto &screenW = window->GetWidth();
         const auto &screenH = window->GetHeight();
@@ -153,7 +153,7 @@ namespace game
 
     void WolkingZombies::DrawPlayerStats()
     {
-        auto renderer = sg::GetEngine().GetRenderer();
+        auto renderer = sgraphics::GetEngine().GetRenderer();
         const auto &hp = player_->GetStats().hp;
 
         renderer->DrawRect(FRectType({{20, 20}, {FULL_HP * 2, 20}}), {160, 150, 150, 150}, true);

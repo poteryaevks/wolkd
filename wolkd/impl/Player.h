@@ -41,13 +41,13 @@ namespace game
     private:
         IGame::Ptr game_;
         PlayerStats stats_;
-        sg::ICollision::Ptr dynCollision_;
-        sg::ICollision::Ptr staticCollision_;
-        sg::IWindow::Ptr window_;
-        sg::IEventer::Ptr eventer_;
+        sgraphics::ICollision::Ptr dynCollision_;
+        sgraphics::ICollision::Ptr staticCollision_;
+        sgraphics::IWindow::Ptr window_;
+        sgraphics::IEventer::Ptr eventer_;
         FRectType rect_;
-        sg::ISprite::Ptr sprite_;
+        sgraphics::ISprite::Ptr sprite_;
         FRectType offset_{};
-        sg::MousePosType mousePosition_{};
+        sgraphics::MousePosType mousePosition_{};
     };
 }

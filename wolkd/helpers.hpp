@@ -12,9 +12,9 @@ namespace
     }
 
     template <>
-    sg::ICollision::RectsType Convert<game::FRectRefs, sg::ICollision::RectsType>(const game::FRectRefs &rects)
+    sgraphics::ICollision::RectsType Convert<game::FRectRefs, sgraphics::ICollision::RectsType>(const game::FRectRefs &rects)
     {
-        sg::ICollision::RectsType result;
+        sgraphics::ICollision::RectsType result;
         for (const auto &rect : rects)
         {
             result.push_back(const_cast<game::FRectType *>(&(rect.get())));

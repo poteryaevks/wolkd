@@ -11,7 +11,7 @@ namespace game
     {
         using Ptr = std::shared_ptr<Stats>;
         virtual ~Stats() = default;
-        sg::RgbType rgb;
+        sgraphics::RgbType rgb;
         std::filesystem::path path;
         float damage;
         float speed;

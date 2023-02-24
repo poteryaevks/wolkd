@@ -18,8 +18,8 @@ namespace game
     {
     public:
         using Ptr = std::unique_ptr<ITile>;
-        ITile(FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
-            : sprite_(sg::GetEngine().CreateSprite(path, rgb)),
+        ITile(FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
+            : sprite_(sgraphics::GetEngine().CreateSprite(path, rgb)),
               rect_(rect)
         {
         }
@@ -39,18 +39,18 @@ namespace game
             return rect;
         }
 
-        sg::ISprite::Ptr sprite_;
+        sgraphics::ISprite::Ptr sprite_;
         FRectType rect_;
         FRectType offSettedRect_;
     };
 
-    using TileConstuctor = std::function<ITile::Ptr(FRectType, const std::string &, const sg::RgbType &)>;
-    static alm::misc::IFactory<ITile, char, TileConstuctor, FRectType, const std::string &, const sg::RgbType &> TILE_FACTORY;
+    using TileConstuctor = std::function<ITile::Ptr(FRectType, const std::string &, const sgraphics::RgbType &)>;
+    static alm::misc::IFactory<ITile, char, TileConstuctor, FRectType, const std::string &, const sgraphics::RgbType &> TILE_FACTORY;
 
     class CarTile final : public ITile
     {
     public:
-        CarTile(FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+        CarTile(FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
             : ITile(rect, path, rgb)
         {
         }
@@ -74,7 +74,7 @@ namespace game
     class TreeTile final : public ITile
     {
     public:
-        TreeTile(FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+        TreeTile(FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
             : ITile(rect, path, rgb)
         {
             //        prevRect_ = rect_;
@@ -102,7 +102,7 @@ namespace game
     {
 
     public:
-        GWallTile(FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+        GWallTile(FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
             : ITile(rect, path, rgb)
         {
         }
@@ -125,7 +125,7 @@ namespace game
     class TankTile final : public ITile
     {
     public:
-        TankTile(FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+        TankTile(FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
             : ITile(rect, path, rgb)
         {
         }
@@ -159,7 +159,7 @@ namespace game
     class MonumentTile final : public ITile
     {
     public:
-        MonumentTile(FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+        MonumentTile(FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
             : ITile(rect, path, rgb)
         {
         }
@@ -182,7 +182,7 @@ namespace game
     class NoneTile final : public ITile
     {
     public:
-        NoneTile(FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+        NoneTile(FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
             : ITile(rect, path, rgb)
         {
         }
@@ -203,7 +203,7 @@ namespace game
     class HouseLeftTile final : public ITile
     {
     public:
-        HouseLeftTile(FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+        HouseLeftTile(FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
             : ITile(rect, path, rgb)
         {
             prevRect_ = rect_;
@@ -234,7 +234,7 @@ namespace game
     class HouseRightTile final : public ITile
     {
     public:
-        HouseRightTile(FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+        HouseRightTile(FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
             : ITile(rect, path, rgb)
         {
             prevRect_ = rect_;
@@ -267,7 +267,7 @@ namespace game
     class GroundTile final : public ITile
     {
     public:
-        GroundTile(FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+        GroundTile(FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
             : ITile(rect, path, rgb)
         {
         }
@@ -288,7 +288,7 @@ namespace game
     class RoadITile final : public ITile
     {
     public:
-        RoadITile(FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+        RoadITile(FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
             : ITile(rect, path, rgb)
         {
         }
@@ -311,7 +311,7 @@ namespace game
     class Road_Tile final : public ITile
     {
     public:
-        Road_Tile(FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+        Road_Tile(FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
             : ITile(rect, path, rgb)
         {
         }
@@ -334,7 +334,7 @@ namespace game
     class RoadrTile final : public ITile
     {
     public:
-        RoadrTile(FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+        RoadrTile(FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
             : ITile(rect, path, rgb)
         {
         }
@@ -356,73 +356,73 @@ namespace game
     ////////////////////////factory////////////////////////
 
     const bool CarTileReg = TILE_FACTORY.Register('1',
-                                                  [](FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+                                                  [](FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
                                                   {
                                                       return std::make_unique<CarTile>(rect, path, rgb);
                                                   });
 
     const bool TreeTileReg = TILE_FACTORY.Register('#',
-                                                   [](FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+                                                   [](FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
                                                    {
                                                        return std::make_unique<TreeTile>(rect, path, rgb);
                                                    });
 
     const bool GWallTileReg = TILE_FACTORY.Register('w',
-                                                    [](FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+                                                    [](FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
                                                     {
                                                         return std::make_unique<GWallTile>(rect, path, rgb);
                                                     });
 
     const bool TankTileReg = TILE_FACTORY.Register('b',
-                                                   [](FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+                                                   [](FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
                                                    {
                                                        return std::make_unique<TankTile>(rect, path, rgb);
                                                    });
 
     const bool MonumentTileReg = TILE_FACTORY.Register('+',
-                                                       [](FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+                                                       [](FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
                                                        {
                                                            return std::make_unique<MonumentTile>(rect, path, rgb);
                                                        });
 
     const bool GroundTileReg = TILE_FACTORY.Register('.',
-                                                     [](FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+                                                     [](FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
                                                      {
                                                          return std::make_unique<GroundTile>(rect, path, rgb);
                                                      });
 
     const bool Road_TileReg = TILE_FACTORY.Register('-',
-                                                    [](FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+                                                    [](FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
                                                     {
                                                         return std::make_unique<Road_Tile>(rect, path, rgb);
                                                     });
 
     const bool RoadITileReg = TILE_FACTORY.Register('|',
-                                                    [](FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+                                                    [](FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
                                                     {
                                                         return std::make_unique<RoadITile>(rect, path, rgb);
                                                     });
 
     const bool RoadrTileReg = TILE_FACTORY.Register('r',
-                                                    [](FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+                                                    [](FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
                                                     {
                                                         return std::make_unique<RoadrTile>(rect, path, rgb);
                                                     });
 
     const bool NoneTileReg = TILE_FACTORY.Register('n',
-                                                   [](FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+                                                   [](FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
                                                    {
                                                        return std::make_unique<NoneTile>(rect, path, rgb);
                                                    });
 
     const bool HouseLReg = TILE_FACTORY.Register('L',
-                                                 [](FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+                                                 [](FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
                                                  {
                                                      return std::make_unique<HouseLeftTile>(rect, path, rgb);
                                                  });
 
     const bool HouseRReg = TILE_FACTORY.Register('J',
-                                                 [](FRectType rect, const std::filesystem::path &path, const sg::RgbType &rgb = {})
+                                                 [](FRectType rect, const std::filesystem::path &path, const sgraphics::RgbType &rgb = {})
                                                  {
                                                      return std::make_unique<HouseRightTile>(rect, path, rgb);
                                                  });
