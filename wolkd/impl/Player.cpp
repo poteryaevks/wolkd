@@ -41,32 +41,22 @@ namespace game
 
     void Player::Show(const Duration &duration) noexcept
     {
+        if (eventer_->LeftMouseDown())
+        {
             mousePosition_ = eventer_->MousePosition();
-            rect_.vel = mousePosition_ - rect_.pos;
-            rect_.vel = rect_.vel.norm() * stats_.speed;
+        }
+
+        rect_.vel = mousePosition_ - rect_.pos;
+        rect_.vel = rect_.vel.norm() * stats_.speed;
 
         auto renderer = sgraphics::GetEngine().GetRenderer();
         float seconds = duration.count() * 1e-9;
         auto tiles = game_->GetRects(ObjectsCategory(MAP));
-        // auto movingObjects = game_->GetRects(ObjectsCategory(ENEMY));
         dynCollision_->Calculate(rect_, ::Convert<FRectRefs, sgraphics::ICollision::RectsType>(tiles), seconds);
-        // if (staticCollision_->Calculate(rect_, ::Convert<FRectRefs, sgraphics::ICollision::RectsType>(movingObjects), seconds))
-        // {
-        // for (const auto &rect : rect_.contact)
-        // {
-        // }
-        // }
-
         offset_.pos += rect_.vel * seconds;
         mousePosition_ -= rect_.vel * seconds;
-
 #ifdef NDEBUG_
-        renderer->DrawRect(FRectType({{mousePosition_.x, mousePosition_.y}, {SPRITE_SIZE.x, SPRITE_SIZE.y}}), {160, 160, 0, 255});
-        for (const auto &rect : movingObjects)
-        {
-            renderer->DrawRect(rect, {160, 160, 0, 255});
-        }
-
+        renderer->DrawRect(FRectType({mousePosition_, SPRITE_SIZE}), {160, 160, 0, 255});
         for (const auto &rect : rect_.contact)
         {
             if (rect)

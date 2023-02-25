@@ -48,6 +48,6 @@ namespace game
         FRectType rect_;
         sgraphics::ISprite::Ptr sprite_;
         FRectType offset_{};
-        sgraphics::MousePosType mousePosition_{};
+        olc::vf2d mousePosition_{};
     };
 }

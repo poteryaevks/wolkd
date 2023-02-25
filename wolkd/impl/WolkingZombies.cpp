@@ -20,7 +20,8 @@ namespace
 namespace game
 {
     WolkingZombies::WolkingZombies(const std::string &title)
-        : sgraphics::BaseGame(title)
+        : sgraphics::BaseGame(title),
+          sgEventer_(sgraphics::GetEngine().GetEventer())
     {
         // static IdType CurrentId{};
         // auto eventer = sgraphics::GetEngine().GetEventer();
@@ -35,7 +36,6 @@ namespace game
 
         world_ = std::make_unique<WorldImpl>(this, std::move(worldInitData));
         world_->addEventHandler(*this, &WolkingZombies::OnEvent);
-
         player_ = std::make_unique<Player>(this, std::move(playerInitData));
         player_->addEventHandler(*this, &WolkingZombies::OnEvent);
 
@@ -55,8 +55,42 @@ namespace game
 
     WolkingZombies::~WolkingZombies() = default;
 
+    void WolkingZombies::OnEvent(Event::Ptr event) noexcept
+    {
+        if (!event)
+            return;
+
+        switch (event->getType())
+        {
+        case ATTACK:
+        {
+            auto id = event->GetId();
+
+            if (player_->GetId() == id)
+            {
+                player_->OnEvent(event);
+                return;
+            }
+
+            for (const auto &zombie : m_zombies)
+            {
+                if (zombie->GetId() == id)
+                {
+                    zombie->OnEvent(event);
+                    return;
+                }
+            }
+
+            break;
+        }
+        default:
+            break;
+        }
+    }
+
     void WolkingZombies::OnUpdate(const Duration &duration)
     {
+        quit_ = sgEventer_->Quit();
         world_->Show(duration);
 
         for (auto &object : m_zombies)
@@ -72,7 +106,7 @@ namespace game
     void WolkingZombies::OnQuit() {}
     void WolkingZombies::OnCreate() {}
 
-    const FRectType& WolkingZombies::GetPlayerRect() const noexcept
+    const FRectType &WolkingZombies::GetPlayerRect() const noexcept
     {
         return player_->GetRect();
     }
@@ -116,39 +150,6 @@ namespace game
     IdType WolkingZombies::GetPlayerId() const noexcept
     {
         return player_->GetId();
-    }
-
-    void WolkingZombies::OnEvent(Event::Ptr event) noexcept
-    {
-        if (!event)
-            return;
-
-        switch (event->getType())
-        {
-        case ATTACK:
-        {
-            auto id = event->GetId();
-
-            if (player_->GetId() == id)
-            {
-                player_->OnEvent(event);
-                return;
-            }
-
-            for (const auto &zombie : m_zombies)
-            {
-                if (zombie->GetId() == id)
-                {
-                    zombie->OnEvent(event);
-                    return;
-                }
-            }
-
-            break;
-        }
-        default:
-            break;
-        }
     }
 
     void WolkingZombies::DrawPlayerStats()
